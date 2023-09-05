@@ -1,23 +1,20 @@
 import express from "express";
 import {
     getUsers,
-    getUsersById,
-    createUsers,
-    updateUsers,
-    deleteUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser,
+    createRecipe
 } from "../controllers/users.js";
-// import { verifyUser, adminOnly } from "../middleware/authuser.js";
+import { verifyUser, adminOnly } from "../middleware/authuser.js";
 
 const router = express.Router();
 
-router.get( "/users", getUsers);
-
-router.get("/users/:id", getUsersById);
-
-router.post("/users", createUsers);
-
-router.put("/users/:id", updateUsers);
-
-router.delete("/users/:id", deleteUsers);
+router.get('/users', verifyUser, adminOnly, getUsers);
+router.get('/users/:id', verifyUser, adminOnly, getUserById);
+router.post('/users', verifyUser, adminOnly, createUser);
+router.delete('/users/:id', verifyUser, adminOnly, deleteUser);
+router.post('/recipes', verifyUser, adminOnly, createRecipe);
 
 export default router;

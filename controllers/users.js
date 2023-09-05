@@ -1,102 +1,111 @@
-import Users from "../models/usermodel.js";
+import User from "../models/usermodel.js";
+import Recipes from "../models/recipemodel.js";
 import argon2 from "argon2";
 
-export const getUsers = async(req, res) => {
+export const getUsers = async(req, res) =>{
     try {
-        const response = await Users.findAll({
-            attributes: ['uuid', 'name', 'email', 'role']
+        const response = await User.findAll({
+            attributes:['uuid','name','email','role']
         });
         res.status(200).json(response);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({msg: error.message});
     }
-};
+}
 
-export const getUsersById = async(req, res) => {
+export const getUserById = async(req, res) =>{
     try {
-        const response = await Users.findOne({
-            attributes: ['uuid', 'name', 'email', 'role'], 
+        const response = await User.findOne({
+            attributes:['uuid','name','email','role'],
             where: {
                 uuid: req.params.id
             }
         });
         res.status(200).json(response);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({msg: error.message});
     }
 }
 
-export const createUsers = async(req, res) => {
-    const { name, email, password, confPassword, role } = req.body;
-    if(password !== confPassword){
-        return res.status(400).json({ message: "Password not match" });
-        const hashPassword = await argon2.hash(password);
-        try {
-            await Users.create({
-                name: name,
-                email: email,
-                password: hashPassword,
-                role: role
-            });
-            res.status(201).json({ message: "Registration success" });
-        } catch (error) {
-            res.status(500).json({ message: "Registration failed" });
-        }
-    }
-}
-
-export const updateUsers = async(req, res) => {
-    const user = await Users.findOne({
-        where: {
-            uuid: req.params.id
-        }
-    });
-    if(!user){
-        return res.status(400).json({ message: "User not found" });
-    }
-    const { name, email, password, confPassword, role } = req.body;
-    let hashPassword;
-    if(password === "" || password === null) {
-        hashPassword = user.password;
-    } else{
-        hashPassword = await argon2.hash(password);
-    }
-    if(password !== confPassword){
-        return res.status(400).json({ message: "Password not match" });
+export const createUser = async(req, res) =>{
+    const {name, email, password, confPassword, role} = req.body;
+    if(password !== confPassword) return res.status(400).json({msg: "Password dan Confirm Password tidak cocok"});
+    const hashPassword = await argon2.hash(password);
     try {
-        await Users.update({
+        await User.create({
             name: name,
             email: email,
             password: hashPassword,
             role: role
-        }, {
-            where:{
-                id: user.id
-            }
         });
-        res.status(200).json({ message: "User updated" });
+        res.status(201).json({msg: "Register Berhasil"});
     } catch (error) {
-        res.status(500).json({ message: "Registration failed" });
+        res.status(400).json({msg: error.message});
     }
-}}
+}
 
-export const deleteUsers = async(req, res) => {
-    const user = await Users.findOne({
+export const updateUser = async(req, res) =>{
+    const user = await User.findOne({
         where: {
             uuid: req.params.id
         }
     });
-    if(!user){
-        return res.status(400).json({ message: "User not found" });
+    if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
+    const {name, email, password, confPassword, role} = req.body;
+    let hashPassword;
+    if(password === "" || password === null){
+        hashPassword = user.password
+    }else{
+        hashPassword = await argon2.hash(password);
     }
+    if(password !== confPassword) return res.status(400).json({msg: "Password dan Confirm Password tidak cocok"});
     try {
-        await Users.destroy({
+        await User.update({
+            name: name,
+            email: email,
+            password: hashPassword,
+            role: role
+        },{
             where:{
                 id: user.id
             }
         });
-        res.status(200).json({ message: "User deleted" });
+        res.status(200).json({msg: "User Updated"});
     } catch (error) {
-        res.status(500).json({ message: "Nuh uh" });
+        res.status(400).json({msg: error.message});
     }
-};
+}
+
+export const deleteUser = async(req, res) =>{
+    const user = await User.findOne({
+        where: {
+            uuid: req.params.id
+        }
+    });
+    if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
+    try {
+        await User.destroy({
+            where:{
+                id: user.id
+            }
+        });
+        res.status(200).json({msg: "User Deleted"});
+    } catch (error) {
+        res.status(400).json({msg: error.message});
+    }
+}
+
+export const createRecipe = async (req, res) => {
+    const {title, cooking_time_seconds} = req.body;
+    if(password !== confPassword) return res.status(400).json({msg: "You cannot create a recipe, human"});
+    const hashPassword = await argon2.hash(password);
+    try {
+        await Recipes.create({
+            title: title,
+            cooking_time_seconds: cooking_time_seconds
+        });
+        res.status(201).json({msg: "Successfully created a recipe"});
+    } catch (error) {
+        res.status(400).json({msg: error.message});
+    }
+}

@@ -2,10 +2,10 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "name": "Punay",
-  "email": "admin@gmail.com",
-  "password": "123456",
-  "confPassword": "123456",
+  "name": "Punai",
+  "email": "admin3@gmail.com",
+  "password": "123456", 
+  "confPassword" : "123456",
   "role": "admin"
 }
 
@@ -14,17 +14,34 @@ Content-Type: application/json
 GET http://localhost:3000/users
 
 
-### Update User
-PATCH http://localhost:3000/users/:id
+### Get Single User
+GET http://localhost:3000/users/55d4f7e4-7f36-44af-9dac-66de48df5951
+
+
+### Delete User
+DELETE http://localhost:3000/users/55d4f7e4-7f36-44af-9dac-66de48df5951
+
+
+### Login User
+POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "name": "Pun UPDATED",
-  "email": "admin@gmail.com",
-  "password": "123456",
-  "confPassword": "123456",
-  "role": "admin"
+  "email": "hymne@gmail.com",
+  "password": "123456"
 }
 
-// Delete User
-DELETE http://localhost:3000/users/:id
+### Login Admin
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "123456"
+}
+
+### Me 
+GET http://localhost:3000/me
+
+### Logout
+DELETE http://localhost:3000/logout
