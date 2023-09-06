@@ -1,6 +1,6 @@
 import User from "../models/usermodel.js";
-import Recipes from "../models/recipemodel.js";
 import argon2 from "argon2";
+
 
 export const getUsers = async(req, res) =>{
     try {
@@ -44,38 +44,6 @@ export const createUser = async(req, res) =>{
     }
 }
 
-export const updateUser = async(req, res) =>{
-    const user = await User.findOne({
-        where: {
-            uuid: req.params.id
-        }
-    });
-    if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
-    const {name, email, password, confPassword, role} = req.body;
-    let hashPassword;
-    if(password === "" || password === null){
-        hashPassword = user.password
-    }else{
-        hashPassword = await argon2.hash(password);
-    }
-    if(password !== confPassword) return res.status(400).json({msg: "Password dan Confirm Password tidak cocok"});
-    try {
-        await User.update({
-            name: name,
-            email: email,
-            password: hashPassword,
-            role: role
-        },{
-            where:{
-                id: user.id
-            }
-        });
-        res.status(200).json({msg: "User Updated"});
-    } catch (error) {
-        res.status(400).json({msg: error.message});
-    }
-}
-
 export const deleteUser = async(req, res) =>{
     const user = await User.findOne({
         where: {
@@ -95,17 +63,3 @@ export const deleteUser = async(req, res) =>{
     }
 }
 
-export const createRecipe = async (req, res) => {
-    const {title, cooking_time_seconds} = req.body;
-    if(password !== confPassword) return res.status(400).json({msg: "You cannot create a recipe, human"});
-    const hashPassword = await argon2.hash(password);
-    try {
-        await Recipes.create({
-            title: title,
-            cooking_time_seconds: cooking_time_seconds
-        });
-        res.status(201).json({msg: "Successfully created a recipe"});
-    } catch (error) {
-        res.status(400).json({msg: error.message});
-    }
-}
