@@ -21,6 +21,8 @@ POST /localhost:3000/recipes : Post a recipe
 PATCH /localhost:3000/recipes/:uuid : Edit a recipe
 DELETE /localhost:3000/recipes/:uuid: Delete a recipe
 
+![Endpoints list 1](/images/api%20endpoints%201.png)
+![Endpoints list 2](/images/api%20endpoints%202.png) 
 
 Here's the [link](https://week-11-heypuni-production.up.railway.app) to the project
 
