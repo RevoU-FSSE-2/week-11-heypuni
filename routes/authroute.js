@@ -1,12 +1,13 @@
-import express from "express";
-import { Login, logOut, Me } from "../controllers/auth.js";
+const { Router } = require('express')
+const { register, login, logout, passwordResetRequest, passwordReset } = require('../controllers/users')
+const { loginLimiter } = require('../middleware/ratelimit')
 
-const router = express.Router();
+const authRoute = Router()
 
-router.get( "/me", Me);
+authRoute.post('/register', register)
+authRoute.post('/login', loginLimiter, login)
+authRoute.post('/logout', logout)
+authRoute.post('/passwordResetRequest', passwordResetRequest)
+authRoute.post('/passwordReset', passwordReset)
 
-router.post("/login", Login);
-
-router.delete("/logout", logOut);
-
-export default router;
+module.exports = authRoute;
